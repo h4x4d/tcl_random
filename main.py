@@ -59,7 +59,7 @@ async def add_handler(message: Message):
     name = data[0]
     album = data[1][20:].split('_')
     numbers = [int(i) - 1 for i in data[2:]]
-    photo_objects = (await api.photos.get(owner_id=album[0], album_id=album[1])).items
+    photo_objects = (await api.photos.get(owner_id=album[0], album_id=album[1], count=1000)).items
     photos = [
         f'photo{i.owner_id}_{i.id}' for i in photo_objects
     ]
