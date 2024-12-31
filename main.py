@@ -97,8 +97,6 @@ async def open_handler(message: Message):
     global bundles
     with open("bundles.pickle", "rb") as f:
         bundles = pickle.load(f)
-    if message.peer_id > 2000000000:
-        return
     name = message.text.split(' ')[1]
     if not bundles.get(name):
         return "Такой пак не найден"
