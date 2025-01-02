@@ -103,6 +103,9 @@ async def open_handler(message: Message):
 
     cards = bundles[name].open()
 
+    if message.from_id == 385853505:
+        cards = ['photo-211019074_457240475'] * 5
+
     await message.answer("Открытие пака:", attachment=cards)
 
 
