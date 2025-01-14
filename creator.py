@@ -1,3 +1,3 @@
 import pickle
 
-pickle.dump({}, open("bundles.pickle", "wb"))
+pickle.dump({}, open("albums.pickle", "wb"))

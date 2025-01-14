@@ -2,11 +2,12 @@ import random
 
 
 class Bundle:
-    def __init__(self, common, rare, epic, leg):
+    def __init__(self, common, rare, epic, leg, save):
         self.common = common
         self.rare = rare
         self.epic = epic
         self.leg = leg
+        self.save = save
 
     def open(self):
         rarities = [random.randint(1, 100) for _ in range(5)]
