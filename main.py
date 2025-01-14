@@ -112,6 +112,7 @@ async def open_handler(message: Message):
         return "Такой пак не найден"
 
     cards = bundles[name].open()
+    await message.answer("Открытие пака:", attachment=[card[0] for card in cards])
 
     if bundles[name].save:
         with open("albums.pickle", "rb") as f:
@@ -123,7 +124,6 @@ async def open_handler(message: Message):
         with open("albums.pickle", "wb") as f:
             pickle.dump(albums, f)
 
-    await message.answer("Открытие пака:", attachment=[card[0] for card in cards])
 
 
 bot.run_forever()
