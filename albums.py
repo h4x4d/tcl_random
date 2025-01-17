@@ -28,3 +28,9 @@ async def upload_pack(api: vkbottle.api.api.API, album_id, cards_list):
         hash=r['hash'],
         server=r['server'],
     )
+
+
+async def delete_card(api: vkbottle.api.api.API, card_link):
+    card = card_link[20:].split("_")
+
+    await api.photos.delete(int(card[0]), int(card[1]))

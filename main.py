@@ -1,4 +1,5 @@
 import pickle
+import random
 import sys
 
 from loguru import logger
@@ -6,7 +7,7 @@ from vkbottle import API, PhotoToAlbumUploader
 from vkbottle.bot import Bot, Message
 from vkbottle.dispatch.rules.base import CommandRule
 
-from albums import create_album, upload_pack
+from albums import create_album, upload_pack, delete_card
 from bundle import Bundle
 from data import TOKEN, USER_TOKEN, ADMINS
 
@@ -19,6 +20,14 @@ logger.remove()
 logger.add(sys.stderr, level="ERROR")
 
 add_rule = CommandRule("добавить", ["!", "/"], 7, "\n")
+change_rule = CommandRule("замена", ["!", "/"], 3, " ")
+
+rarities = {
+    "обычная": "common",
+    "редкая": "rare",
+    "эпическая": "epic",
+    "легендарная": "leg"
+}
 
 
 @bot.on.message(CommandRule("док", ["!", "/"]))
@@ -26,7 +35,8 @@ async def doc_handler(message: Message):
     await message.answer(
         "Поддерживаются следующие команды:\n\n"
         "Для игроков:\n"
-        "!открыть *название пака* - открывает пак\n\n"
+        "!открыть *название пака* - открывает пак\n"
+        "!замена *название пака* *редкость* *ссылка на карту*\n\n"
         "Для администраторов:\n"
         "!добавить - добавляет новый пак (отдельная документация по команде !добавить без аргументов)\n"
         "!удалить *название пака* - удаляет пак"
@@ -124,6 +134,25 @@ async def open_handler(message: Message):
         with open("albums.pickle", "wb") as f:
             pickle.dump(albums, f)
 
+
+@bot.on.message(change_rule)
+async def open_handler(message: Message):
+    with open("bundles.pickle", "rb") as f:
+        bundles = pickle.load(f)
+    data = (await change_rule.check(message))['args']
+
+    if bundles.get(data[0]) is None:
+        return "Такой пак не найден"
+    if rarities.get(data[1]) is None:
+        return "Такая редкость не найдена"
+
+    new_card = random.choice(getattr(bundles[data[0]], rarities[data[1]]))
+    await message.answer("Замена карты:", attachment=[new_card[0]])
+
+    with open("albums.pickle", "rb") as f:
+        albums = pickle.load(f)
+    await upload_pack(api, albums[message.from_id], [new_card[1]])
+    await delete_card(api, data[2])
 
 
 bot.run_forever()
